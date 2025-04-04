@@ -1,0 +1,23 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Add Product
+    link(rel="stylesheet", href="/css/add-product.css")
+
+  body
+    nav.navbar
+      ul
+        li
+          a(href="/") Shop
+        li
+          a(href="/addproduct") Add Product
+
+    form
+      .form-group
+        label(for="title") Title
+        input#title(type="text", name="title")
+        button(type="submit") Add Product
+
+    script(src="/main.js")

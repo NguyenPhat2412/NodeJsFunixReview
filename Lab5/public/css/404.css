@@ -1,0 +1,19 @@
+.navbar {
+  background-color: #33cc99;
+  overflow: hidden;
+  padding: 10px;
+  margin: -8px;
+}
+.navbar ul {
+  list-style-type: none;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+}
+
+.navbar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.5em;
+  display: block;
+}
