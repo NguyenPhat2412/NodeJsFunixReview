@@ -4,6 +4,7 @@ const users = []; // tao mang user rong
 function requestHandler(req, res) {
   const url = req.url;
   const method = req.method;
+  // tao the html de nhap user
   if (url === "/") {
     res.setHeader("Content-Type", "text/html");
     res.write("<html>");
@@ -27,6 +28,7 @@ function requestHandler(req, res) {
     res.write("</html>");
     return res.end();
   }
+  // xu ly phan hoi khi nhan du lieu tu form
   if (url === "/create-user" && method === "POST") {
     const body = [];
     req.on("data", (chunk) => {
