@@ -1,0 +1,10 @@
+2. Những framework nào sau đây không thể thay thế Express.js trong Node.js
+Vue.js
+3. Express.js hỗ trợ gì cho chúng ta so với việc sử dụng Node.js thông thường
+- Hỗ trợ Middleware giúp việc quản lý, xử lý dòng chảy hoạt động dễ dàng, trực quan hơn. 
+- Hỗ trợ sẵn Router giúp điều hướng, chuyển sang thuật tiện
+- Chỉ cần tập trung vào xử lý logic của dữ án, không cần quan tâm đến cấu trúc và những cài đặt khác.
+4. Đoạn code nào sau đây đúng khi sử dụng Express router với nhu cầu "chỉ post request mới được chấp nhận"
+app.post("/", function(req, res, next));
+5. Đoạn code nào sau đây đúng nhất khi muốn định nghĩa code rới 
+app.use()
