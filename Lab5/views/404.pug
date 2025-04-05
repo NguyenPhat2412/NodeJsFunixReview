@@ -1,21 +1,4 @@
+extends layouts/main-layout.pug
 
-doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title Document
-    link(rel="stylesheet", href="/css/404.css")
-  body
-    nav.navbar
-      ul
-        li
-          a(href="/") Shop
-        li
-          a(href="/addproduct") Add Product
-
-    h1 404 - Page Not Found
-    p The page you are looking for does not exist.
-
-    //- // script(src="/main.js")
-    
+block content
+    h1 Page Not Found!

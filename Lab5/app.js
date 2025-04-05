@@ -1,26 +1,21 @@
-const express = require("express");
-const app = express();
 const path = require("path");
+const express = require("express");
 
-// const ejs = require("ejs");
+const bodyParser = require("body-parser");
 
-// dùng pug
+const app = express();
+
 app.set("view engine", "pug");
-// thiet lap thu muc views
 app.set("views", path.join(__dirname, "views"));
 
-app.use(express.static("public"));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
 
-// thiet lap cac duong dan
-app.get("/", (req, res) => {
-  res.render("shop");
-});
-app.get("/addproduct", (req, res) => {
-  res.render("addProduct");
-});
+app.use("/admin", adminData.routes);
+app.use(shopRoutes);
 
-app.use((req, res) => {
-  res.status(404).render("404");
+app.use((req, res, next) => {
+  res.status(404).render("404", { pageTitle: "Page Not Found" });
 });
 
 app.listen(3000);
