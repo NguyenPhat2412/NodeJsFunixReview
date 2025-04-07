@@ -6,7 +6,7 @@ const express = require("express");
 // const cors = require("cors");
 
 // app.use(cors());
-
+const get404 = require("./controllers/404");
 // Middleware de phan tich parse du lieu tu post request (duoi dang form hoac json)
 const bodyParser = require("body-parser");
 
@@ -42,8 +42,6 @@ app.use("/admin", adminData);
 app.use(shopRoutes);
 
 // middleware xu lu cac duong dan ko ton tai
-app.use((req, res, next) => {
-  res.status(404).render("404", { pageTitle: "Page Not Found" });
-});
+app.use(get404.get404);
 
 app.listen(3000);
