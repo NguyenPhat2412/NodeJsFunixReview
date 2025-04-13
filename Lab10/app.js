@@ -70,16 +70,7 @@ sequelize
     // sẽ in ra user đầu tiên trong database
     // console.log(user);
     // console.log(result);
-
-    // trong đoạn này có mối quan hệ giữa user và cart lên Sequelize tự động thêm
-    // vào để tạo bản ghi mới trong bảng cart và tự động liên kết với nó
-    return user.createCart();
-  })
-  .then((cart) => {
-    // console.log(cart);
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
-    });
+    app.listen(3000);
   })
   .catch((err) => {
     console.log(err);

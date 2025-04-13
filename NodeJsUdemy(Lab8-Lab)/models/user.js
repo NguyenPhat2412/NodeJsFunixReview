@@ -1,36 +1,25 @@
 const Sequelize = require("sequelize");
-
-// lấy dữ liệu kết nối với database
 const sequelize = require("../util/database");
 
-const Product = sequelize.define("product", {
-  // định nghĩa các thuộc tính của bảng product
+const User = sequelize.define("user", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
     allowNull: false,
     primaryKey: true,
   },
-
-  title: {
+  name: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-
-  price: {
-    type: Sequelize.DOUBLE,
-    allowNull: false,
-  },
-
-  imageUrl: {
+  email: {
     type: Sequelize.STRING,
     allowNull: false,
   },
-
-  description: {
+  password: {
     type: Sequelize.STRING,
     allowNull: false,
   },
 });
 
-module.exports = Product;
+module.exports = User;

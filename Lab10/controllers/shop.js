@@ -29,55 +29,33 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts().then((products) => {
-        res.render("shop/cart", {
-          path: "/cart",
-          pageTitle: "Your Cart",
-          products: products,
-        });
+  Cart.getCart((cart) => {
+    Product.fetchAll((products) => {
+      const cartProducts = [];
+      for (product of products) {
+        const cartProductData = cart.products.find(
+          (prod) => prod.id === product.id
+        );
+        if (cartProductData) {
+          cartProducts.push({ productData: product, qty: cartProductData.qty });
+        }
+      }
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products: cartProducts,
       });
-    })
-    .catch((err) => {
-      console.log(err);
     });
-  // Cart.getCart((cart) => {
-  //   Product.fetchAll((products) => {
-  //     const cartProducts = [];
-  //     for (product of products) {
-  //       const cartProductData = cart.products.find(
-  //         (prod) => prod.id === product.id
-  //       );
-  //       if (cartProductData) {
-  //         cartProducts.push({ productData: product, qty: cartProductData.qty });
-  //       }
-  //     }
-  //     res.render("shop/cart", {
-  //       path: "/cart",
-  //       pageTitle: "Your Cart",
-  //       products: cartProducts,
-  //     });
-  //   });
-  // });
+  });
 };
 
 // thêm sản phẩm vòa cart
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  // Product.findByPk(prodId, (product) => {
-  //   Card.addProduct(prodId, product.price);
-  // });
-  // res.redirect("/cart");
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  Product.findByPk(prodId, (product) => {
+    Card.addProduct(prodId, product.price);
+  });
+  res.redirect("/cart");
 };
 
 // xóa sản phẩm trong cart
@@ -128,34 +106,9 @@ exports.getProduct = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  let cart;
-  req.user
-    .getCart()
-    .then((cart) => {
-      return cart.getProducts({ where: { id: prodId } });
-    })
-    .then((products) => {
-      let product;
-      if (products.length > 0) {
-        product = products[0];
-      }
-      let newQuantity = 1;
-      if (product) {
-      }
-      return Product.findByPk(prodId)
-        .then((product) => {
-          return cart.addProduct(product, {
-            through: { quantity: newQuantity },
-          });
-        })
-        .catch((err) => console.log(err));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
   // console.log(prodId);
-  // Product.findByPk(prodId, (product) => {
-  //   Cart.addProduct(prodId, product.price);
-  // });
-  // res.redirect("/cart");
+  Product.findByPk(prodId, (product) => {
+    Cart.addProduct(prodId, product.price);
+  });
+  res.redirect("/cart");
 };
