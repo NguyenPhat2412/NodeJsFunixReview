@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const Cart = require("../models/cart");
+const Order = require("../models/order");
 exports.getProducts = (req, res, next) => {
   Product.findAll()
     .then((products) => {
@@ -63,36 +64,42 @@ exports.getCart = (req, res, next) => {
   // });
 };
 
-// thêm sản phẩm vòa cart
-exports.postCart = (req, res, next) => {
+// xóa sản phẩm trong cart
+exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  // Product.findByPk(prodId, (product) => {
-  //   Card.addProduct(prodId, product.price);
-  // });
-  // res.redirect("/cart");
   req.user
     .getCart()
     .then((cart) => {
       return cart.getProducts({ where: { id: prodId } });
+    })
+    .then((products) => {
+      const product = products[0];
+
+      // hàm xóa sản phẩm trong cart
+      return product.cartitems.destroy();
+    })
+    .then((result) => {
+      res.redirect("/cart");
     })
     .catch((err) => {
       console.log(err);
     });
 };
 
-// xóa sản phẩm trong cart
-exports.postCartDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  Product.findByPk(prodId, (product) => {
-    Cart.deleteProduct(prodId, product.price);
-    res.redirect("/cart");
-  });
-};
+// hàm lấy đơn hàng
 exports.getOrders = (req, res, next) => {
-  res.render("shop/orders", {
-    path: "/orders",
-    pageTitle: "Your Orders",
-  });
+  req.user
+    .getOrders({ include: ["products"] })
+    .then((orders) => {
+      res.render("shop/orders", {
+        path: "/orders",
+        pageTitle: "Your Orders",
+        orders: orders,
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -126,12 +133,43 @@ exports.getProduct = (req, res, next) => {
   //   });
 };
 
-exports.postCart = (req, res, next) => {
-  const prodId = req.body.productId;
-  let cart;
+// Hàm tạo đơn hàng
+exports.postOrder = (req, res, next) => {
+  let fetchedCart;
   req.user
     .getCart()
     .then((cart) => {
+      fetchedCart = cart;
+      return cart.getProducts();
+    })
+    .then((products) => {
+      return req.user.createOrder().then((order) => {
+        return order.addProducts(
+          products.map((product) => {
+            product.orderitems = { quantity: product.cartitems.quantity };
+            return product;
+          })
+        );
+      });
+    })
+    .then(() => {
+      return fetchedCart.setProducts(null);
+    })
+    .then(() => {
+      res.redirect("/orders");
+    })
+    .catch((err) => console.log(err)); // ✅ Cuối cùng mới catch
+};
+
+// hàm thêm sản phẩm vào giỏ hàng
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  let fetchedCart;
+  let newQuantity = 1;
+  req.user
+    .getCart()
+    .then((cart) => {
+      fetchedCart = cart;
       return cart.getProducts({ where: { id: prodId } });
     })
     .then((products) => {
@@ -139,20 +177,20 @@ exports.postCart = (req, res, next) => {
       if (products.length > 0) {
         product = products[0];
       }
-      let newQuantity = 1;
+
       if (product) {
+        newQuantity = product.cartitems.quantity + 1;
+        return product;
       }
-      return Product.findByPk(prodId)
-        .then((product) => {
-          return cart.addProduct(product, {
-            through: { quantity: newQuantity },
-          });
-        })
-        .catch((err) => console.log(err));
+      return Product.findByPk(prodId);
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .then((product) => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity },
+      });
+    })
+    .catch((err) => console.log(err));
+
   // console.log(prodId);
   // Product.findByPk(prodId, (product) => {
   //   Cart.addProduct(prodId, product.price);
