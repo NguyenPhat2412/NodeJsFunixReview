@@ -138,17 +138,15 @@ exports.getProducts = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.user
-    .getProducts({ where: { id: prodId } })
-    .then((product) => {
-      return product.destroy();
-    })
+
+  // xóa sản phẩm theo id
+  Product.deleteById(prodId)
     .then((result) => {
       console.log("Product Deleted");
       res.redirect("/admin/products");
     })
     .catch((err) => {
       console.log(err);
+      res.redirect("/admin/products");
     });
-  res.redirect("/admin/products");
 };

@@ -3,7 +3,7 @@ const mongodb = require("mongodb");
 
 class Product {
   constructor(title, price, imageUrl, description, id) {
-    this._id = id;
+    this._id = new mongodb.ObjectId(id);
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
@@ -16,7 +16,7 @@ class Product {
       // update the product
       dbOp = db
         .collection("products")
-        .updateOne({ _id: new mongodb.ObjectId(this._id) }, { $set: this });
+        .updateOne({ _id: this._id }, { $set: this });
     } else {
       dbOp = db.collection("products").insertOne(this);
     }
@@ -53,7 +53,26 @@ class Product {
         return product;
       })
       .catch((err) => {
-        console.log(err); //
+        console.log(err);
+      });
+  }
+
+  // xóa 1 sản phẩm theo id sử dụng DeleteOne
+  static deleteById(prodID) {
+    const db = getDb();
+
+    if (!mongodb.ObjectId.isValid(prodID)) {
+      console.log("Invalid ID");
+      return;
+    }
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(prodID) })
+      .then((result) => {
+        console.log("Deleted");
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }
 }
