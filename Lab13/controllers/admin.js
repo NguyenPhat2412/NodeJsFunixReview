@@ -18,13 +18,14 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  const product = new Product({
-    title: title,
-    price: price,
-    imageUrl: imageUrl,
-    description: description,
-    userId: req.user,
-  });
+  const product = new Product(
+    title,
+    price,
+    imageUrl,
+    description,
+    null,
+    req.user._id
+  );
 
   // tự động tạo id cho product
   product
@@ -89,7 +90,24 @@ exports.postEditProduct = (req, res, next) => {
   const updatedDesc = req.body.description;
 
   // cập nhật sản phẩm mới
-  Product.findById(prodId)
+  const product = new Product(
+    updatedTitle,
+    updatedPrice,
+    updatedImageUrl,
+    updatedDesc,
+    new ObjectId(prodId)
+  );
+  // const updateProduct = new Product(
+  //   prodId,
+  //   updatedTitle,
+  //   updatedImageUrl,
+  //   updatedDesc,
+  //   updatedPrice
+  // );
+
+  // tìm kiếm sản phẩm theo id để edit
+  product
+    .save()
     .then((product) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
@@ -97,7 +115,6 @@ exports.postEditProduct = (req, res, next) => {
       product.imageUrl = updatedImageUrl;
       return product.save();
     })
-
     .then((result) => {
       console.log("Updated Product");
       res.redirect("/admin/products");
@@ -112,11 +129,8 @@ exports.postEditProduct = (req, res, next) => {
 // lấy tất cả sản phẩm
 exports.getProducts = (req, res, next) => {
   // lấy tất cả sản phẩm theo id
-  Product.find()
-    // .select("title price -_id ") // chỉ lấy title và price
-    // .populate("userId", "name") // tìm kiếm theo id trong product
+  Product.fetchAll()
     .then((products) => {
-      console.log(products);
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
@@ -129,10 +143,13 @@ exports.getProducts = (req, res, next) => {
   // Product.fetchAll((products) => {});
 };
 
-// Lab14.2
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  Product.findByIdAndDelete(prodId)
+  req.user
+    .getProducts({ where: { id: prodId } })
+    .then((product) => {
+      return product.destroy();
+    })
     .then((result) => {
       console.log("Product Deleted");
       res.redirect("/admin/products");

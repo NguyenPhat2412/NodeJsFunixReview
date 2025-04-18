@@ -1,0 +1,14 @@
+.orders__list {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+.orders__item-list {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem;
+  padding: 1rem;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  list-style: none;
+}

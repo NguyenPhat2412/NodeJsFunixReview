@@ -3,9 +3,8 @@ const Cart = require("../models/cart");
 const Order = require("../models/order");
 const user = require("../models/user");
 exports.getProducts = (req, res, next) => {
-  Product.find()
+  Product.fetchAll()
     .then((products) => {
-      console.log(products);
       res.render("shop/product-list", {
         prods: products,
         pageTitle: "Shop",
@@ -18,7 +17,7 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
-  Product.find()
+  Product.fetchAll()
     .then((products) => {
       res.render("shop/index", {
         prods: products,
@@ -33,10 +32,8 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   req.user
-    .populate("cart.items.productId")
-    .then((user) => {
-      const products = user.cart.items;
-      console.log(products);
+    .getCart()
+    .then((products) => {
       res.render("shop/cart", {
         path: "/cart",
         pageTitle: "Your Cart",
@@ -70,7 +67,7 @@ exports.getCart = (req, res, next) => {
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
   req.user
-    .removeFromCart(prodId)
+    .deleteItemFromCart(prodId)
     .then((result) => {
       res.redirect("/cart");
     })
@@ -108,7 +105,6 @@ exports.getProduct = (req, res, next) => {
   const prodID = req.params.productId;
 
   // tìm kiếm id trong product
-  // findById là phương thức có sẵn trong mongoose
   Product.findById(prodID)
     .then((product) => {
       res.render("shop/product-detail", {
@@ -119,28 +115,18 @@ exports.getProduct = (req, res, next) => {
       });
     })
     .catch((err) => console.log(err));
+
+  // Product.findById(prodID)
+  //   .then((product) => {})
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
 };
 
 // Hàm tạo đơn hàng
 exports.postOrder = (req, res, next) => {
   req.user
-    .populate("cart.items.productId")
-    .then((user) => {
-      console.log("Populated cart items:", user.cart.items);
-      const products = user.cart.items.map((i) => {
-        console.log(i);
-        return { quantity: i.quantity, product: { ...i.productId._doc } };
-      });
-      const order = new Order({
-        user: {
-          name: req.user.name,
-          userId: req.user,
-        },
-        products: products,
-      });
-      order.save();
-    })
-
+    .addOrder()
     .then(() => {
       res.redirect("/orders");
     })
