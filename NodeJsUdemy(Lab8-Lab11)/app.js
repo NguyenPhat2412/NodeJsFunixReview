@@ -5,9 +5,10 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const csrf = require("csurf");
+const flash = require("connect-flash");
 
 const errorController = require("./controllers/error");
-const { mongoConnect } = require("./util/database");
 const User = require("./models/user");
 
 const MONGODB_URI =
@@ -16,8 +17,10 @@ const app = express();
 const store = new MongoDBStore({
   uri: MONGODB_URI,
   collection: "sessions",
-  expires: 1000 * 60 * 60 * 24, // 1 day
+  // expires: 1000 * 60 * 60 * 24, // 1 day
 });
+
+const csrfProtection = csrf();
 
 app.set("view engine", "ejs");
 app.set("views", "views");
@@ -36,15 +39,23 @@ app.use(
     store: store,
   })
 );
+app.use(csrfProtection);
+app.use(flash());
 
 app.use((req, res, next) => {
-  User.findById("680265fdd39fa74612344268")
+  User.findById("64b0f2a1c4d3e5f8c8b7e4a1")
     .then((user) => {
       // thêm phương thức user phương thức này siêu quan trọng
       req.user = user;
       next();
     })
     .catch((err) => console.log(err));
+});
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken(); // thêm csrfToken vào locals
+  next();
 });
 
 app.use("/admin", adminRoutes);
@@ -56,21 +67,6 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    console.log("Connected to MongoDB");
-
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "Phat",
-          email: "masterrio2412@gmail.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
-    // tạo user đầu tiên
     app.listen(3000);
   })
   .catch((err) => {

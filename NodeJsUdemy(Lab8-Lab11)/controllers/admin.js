@@ -5,11 +5,16 @@ const mongodb = require("mongodb");
 const ObjectId = mongodb.ObjectId;
 // const getDb = require("../util/database").getDb;
 exports.getAddProduct = (req, res, next) => {
+  // Kiểm tra xem người dùng đã đăng nhập hay chưa, bảo vệ trang này khi người dùng chưa đăng nhập
+  if (!req.session.isLoggedIn) {
+    return res.redirect("/login");
+  }
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.isLoggedIn,
+    // xác thực xem người dùng có đăng nhập hay không
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -24,7 +29,7 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     imageUrl: imageUrl,
     description: description,
-    userId: req.user,
+    userId: req.session.user._id, // lấy id của user
   });
 
   // tự động tạo id cho product
@@ -74,7 +79,7 @@ exports.getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode, // this is for the edit product
         product: product,
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
@@ -123,7 +128,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "Admin Products",
         path: "/admin/products",
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {
