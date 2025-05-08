@@ -1,0 +1,34 @@
+<!--Lab 8.2-->
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/product.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+
+    <main>
+        <% if(errorMessage) { %>
+            <div class="user-message-error">
+                <p class="user-message"><%= errorMessage %></p>
+            </div>
+        <% } %>
+        <form class="login-form" action="/signup" method="POST" novalidate >
+            <div class="form-control">
+                <label for="email">Email</label>
+                <input type="text" name="email" id="email" value = "<%= oldInput.email %>" class = "<%= validationErrors.find(e => e.param === "email") ? "invalid" : "" %>">
+            </div>
+            <div class="form-control">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" value = "<%= oldInput.password %>" class = "<%= validationErrors.find(e => e.param === "password") ? "invalid" : "" %>">
+            </div>
+            <div class="form-control">
+              <label for ="confirmPassword">Confirm Password</label>
+              <input type="password" name="confirmPassword" id="confirmPassword" value = "<%= oldInput.confirmPassword %>" class="<%= validationErrors.find(e => e.param === "confirmPassword") ? "invalid" : "" %>">
+              </div>
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="btn" type="submit">Sign Up</button>
+        </form>
+    </main>
+<%- include('../includes/end.ejs') %>

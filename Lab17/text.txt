@@ -1,0 +1,18 @@
+Lab17.1 có nhiều cách tiếp cận về việc gửi sendMail cho nhiều mail khác nhau 
+Lab17.2 Validation 
+1. Validation dữ liệu Signup
+Bạn sẽ cần thực hiện việc validate theo các yêu cầu như sau: 
+- không có trường dữ liệu bị bỏ trống 
+- Trường email phải đúng định dạng của email 
+- Trường email phải chưa từng tồn tại trong database 
+- Trường password phải lớn hơn 8 kí tự 
+- Trường confirmPassword và password phải giống như nhau 
+2. Validation cho Login
+- Không có trường dữ liệu nào bị bỏ trống
+- Trường email phải đúng định dạng của email 
+- Trường email phải đã tồn tại trong database 
+Lab17.3 Xác thực chỉnh sửa sản phẩm 
+Xác thực chỉnh sửa sản phẩm 
+Validation dữ liệu 
+Lab17.4 Xác thực chỉnh sửa sản phẩm 
+Validation dữ liệu sản phẩm 

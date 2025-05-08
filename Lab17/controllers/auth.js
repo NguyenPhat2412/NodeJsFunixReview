@@ -58,7 +58,7 @@ exports.postLogin = (req, res, next) => {
           email: email,
           password: password,
         },
-        validationErrors: error.array(),
+        validationErrors: [],
       });
     }
     bcrypt
@@ -181,9 +181,6 @@ exports.postSignup = (req, res, next) => {
       // });
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
+      console.log(err);
     });
 };

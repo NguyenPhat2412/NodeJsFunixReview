@@ -29,11 +29,8 @@ exports.getIndex = (req, res, next) => {
       });
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
+      console.log(err);
+    });
 };
 
 exports.getCart = (req, res, next) => {
@@ -49,12 +46,8 @@ exports.getCart = (req, res, next) => {
       });
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
-
+      console.log(err);
+    });
   // Cart.getCart((cart) => {
   //   Product.fetchAll((products) => {
   //     const cartProducts = [];
@@ -84,11 +77,8 @@ exports.postCartDeleteProduct = (req, res, next) => {
       res.redirect("/cart");
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
+      console.log(err);
+    });
 };
 
 // hàm lấy đơn hàng Lab14.4
@@ -102,11 +92,8 @@ exports.getOrders = (req, res, next) => {
       });
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
+      console.log(err);
+    });
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -132,12 +119,7 @@ exports.getProduct = (req, res, next) => {
         path: "/products",
       });
     })
-    .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
+    .catch((err) => console.log(err));
 };
 
 // Hàm tạo đơn hàng
@@ -166,12 +148,7 @@ exports.postOrder = (req, res, next) => {
     .then(() => {
       res.redirect("/orders");
     })
-    .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
-    }); // Cuối cùng mới catch
+    .catch((err) => console.log(err)); // Cuối cùng mới catch
 };
 
 // hàm thêm sản phẩm vào giỏ hàng
@@ -188,10 +165,7 @@ exports.postCart = (req, res, next) => {
       console.log(results);
     })
     .catch((err) => {
-      const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
-      error.httpStatusCode = 500;
-      return next(error);
+      console.log(err);
     });
   // khi sử dụng SQl
   // let fetchedCart;
