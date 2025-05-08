@@ -1,6 +1,9 @@
 const Product = require("../models/product");
 const mongodb = require("mongodb");
 
+const { validationResult } = require("express-validator");
+const { hash } = require("bcryptjs");
+
 // tạo id cho product
 const ObjectId = mongodb.ObjectId;
 // const getDb = require("../util/database").getDb;
@@ -11,10 +14,9 @@ exports.getAddProduct = (req, res, next) => {
   }
   res.render("admin/edit-product", {
     pageTitle: "Add Product",
-    path: "/admin/add-product",
+    path: "/admin/edit-product",
     editing: false,
-    // xác thực xem người dùng có đăng nhập hay không
-    isAuthenticated: req.session.isLoggedIn,
+    hasError: false,
   });
 };
 
@@ -24,6 +26,31 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log({
+      title: title,
+      imageUrl: imageUrl,
+      price: price,
+      description: description,
+    });
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/edit-product",
+      editing: false,
+      hasError: true,
+      errorMessage: errors.array()[0].msg,
+      product: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description,
+      },
+      validationErrors: errors.array(),
+      // isAuthenticated: req.session.isLoggedIn,
+    });
+  }
   const product = new Product({
     title: title,
     price: price,
@@ -79,7 +106,7 @@ exports.getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode, // this is for the edit product
         product: product,
-        isAuthenticated: req.session.isLoggedIn,
+        hasError: false,
       });
     })
     .catch((err) => {
@@ -94,7 +121,24 @@ exports.postEditProduct = (req, res, next) => {
   const updatedImageUrl = req.body.imageUrl;
   const updatedPrice = req.body.price;
   const updatedDesc = req.body.description;
+  const error = validationResult(req);
 
+  if (!error.isEmpty()) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Edit Product",
+      path: "/admin/edit-product",
+      editing: editMode, // this is for the edit product
+      hasError: true,
+      product: {
+        title: updatedTitle,
+        imageUrl: updatedImageUrl,
+        price: updatedPrice,
+        description: updatedDesc,
+      },
+      errorMessage: error.array()[0].msg,
+      validationErrors: error.array(),
+    });
+  }
   // cập nhật sản phẩm mới
   Product.findById(prodId)
     .then((product) => {
