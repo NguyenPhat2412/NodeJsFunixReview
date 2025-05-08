@@ -17,24 +17,26 @@ exports.getAddProduct = (req, res, next) => {
     path: "/admin/edit-product",
     editing: false,
     hasError: false,
+    product: {
+      title: "",
+      imageUrl: "",
+      price: "",
+      description: "",
+    },
+    errorMessage: null,
+    validationErrors: [],
   });
 };
 
 // add thêm product
 exports.postAddProduct = (req, res, next) => {
-  const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
-  const price = req.body.price;
-  const description = req.body.description;
+  const title = req.body.title.trim();
+  const imageUrl = req.body.imageUrl.trim();
+  const price = req.body.price.trim();
+  const description = req.body.description.trim();
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log({
-      title: title,
-      imageUrl: imageUrl,
-      price: price,
-      description: description,
-    });
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
       path: "/admin/edit-product",
@@ -107,6 +109,7 @@ exports.getEditProduct = (req, res, next) => {
         editing: editMode, // this is for the edit product
         product: product,
         hasError: false,
+        validationErrors: [],
       });
     })
     .catch((err) => {
@@ -127,7 +130,7 @@ exports.postEditProduct = (req, res, next) => {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Edit Product",
       path: "/admin/edit-product",
-      editing: editMode, // this is for the edit product
+      editing: true, // this is for the edit product
       hasError: true,
       product: {
         title: updatedTitle,

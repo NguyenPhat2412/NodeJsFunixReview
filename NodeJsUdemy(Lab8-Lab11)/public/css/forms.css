@@ -21,3 +21,13 @@
 .form-control textarea:focus {
   outline-color: #00695c;
 }
+
+.form-control input.invalid,
+.form-control textarea.invalid {
+  border: 2px solid red;
+  background-color: #ffe6e6;
+}
+
+.form-control label.invalid {
+  color: red;
+}

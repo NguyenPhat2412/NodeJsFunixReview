@@ -10,8 +10,8 @@
 
     <main>
         <% if(errorMessage) { %>
-            <div class="user-message">
-                <p><%= errorMessage %></p>
+            <div class="user-message-error">
+                <p class="user-message"><%= errorMessage %></p>
             </div>
         <% } %>
         <form class="login-form" action="/signup" method="POST" novalidate >

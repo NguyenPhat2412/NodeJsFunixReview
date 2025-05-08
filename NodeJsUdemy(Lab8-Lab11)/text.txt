@@ -11,3 +11,4 @@ Bạn sẽ cần thực hiện việc validate theo các yêu cầu như sau:
 - Không có trường dữ liệu nào bị bỏ trống
 - Trường email phải đúng định dạng của email 
 - Trường email phải đã tồn tại trong database 
+Lab17.4 Xác thực chỉnh sửa sản phẩm 

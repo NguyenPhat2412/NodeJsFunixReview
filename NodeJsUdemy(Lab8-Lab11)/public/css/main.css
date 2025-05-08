@@ -216,6 +216,13 @@ form {
   text-align: center;
 }
 
+.user-message-error {
+  background-color: rgb(229, 145, 145);
+  width: 30%;
+  margin: 0 auto;
+  border: 1px solid red;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;

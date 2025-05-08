@@ -39,6 +39,14 @@ router.post(
 // // /admin/edit-product => GET
 router.get(
   "/edit-product/:productId",
+
+  isAuth,
+  adminController.getEditProduct
+);
+
+// // // /admin/edit-product => POST
+router.post(
+  "/edit-product",
   [
     body("title")
       .isString()
@@ -56,11 +64,8 @@ router.get(
       .withMessage("Please enter a valid description (min:5, max:400)"),
   ],
   isAuth,
-  adminController.getEditProduct
+  adminController.postEditProduct
 );
-
-// // // /admin/edit-product => POST
-router.post("/edit-product", isAuth, adminController.postEditProduct);
 
 // // /admin/delete
 router.post("/delete-product", isAuth, adminController.postDeleteProduct);
