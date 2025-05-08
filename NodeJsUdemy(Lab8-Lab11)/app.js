@@ -28,6 +28,7 @@ app.set("views", "views");
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+const user = require("./models/user");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -43,13 +44,21 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
   User.findById("64b0f2a1c4d3e5f8c8b7e4a1")
     .then((user) => {
       // thêm phương thức user phương thức này siêu quan trọng
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 app.use((req, res, next) => {
