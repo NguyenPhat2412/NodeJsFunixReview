@@ -1,20 +1,8 @@
-Lab18.1 Update App
+Upload File
+Xử lý nhiều dữ liệu trên form. 
+Thư viện Multer, cũng như lọc file tương ứng. 
 
-Errors and Http Response Codes
-2xx (Success) : 
-200
-- Yêu cầu được xử lý thành công
-- Thường được sử dụng cho các yêu cầu GET, POST, Hoặc PUT khi không cần tạo tài nguyên mới
-- Ví dụ: Truy vấn dữ liệu từ API và nhận được phản hồi thành công 
-201: Created: 
-- yêu cầu đã được xử lý thành công và một tài nguyên mới được tạo 
-- Thường được sử dụng cho các yêu cầu POST khi tạo tài nguyên mới.
-- Ví dụ: Tạo một tài khoản người dùng mới hoặc thêm một sản phảm vào cơ sở dữ liệu mới. 
-3xx (Redirect): 301
-Các mã trạng thái trong nhóm 3xx cho biết Client cần thực hiện thêm hành động để hoàn tất yêu cầu, thường là chuyển hướng (Redirect)
-- Tài nguyên được yêu cầu đã được chuyển đến một URL mới vĩnh viễn 
-- Client (hoặc trình duyệt) nên sử dụng URL mới cho yêu cầu trong tương lai
-- Ví dụ: Một trang web cũ được chuyển sang một URL mới
-4xx (Client-side error): 401 402 422
-Các mã trạng thái trong nhóm 4xx cho biết có lỗi từ phía Client, chẳng hạn như yêu cầu không hợp lệ hoặc không được phép
-5xx (server error): 500 các mã trạng thái trong nhóm 5xx cho biết server gặp lỗi khi xử lý yêu cầu: 
+Nếu không tải được thì npm install --save multer: 
+- npm install --verbose 
+- npm config set registry https://registry.npmjs.org/
+- npm install --save multer 

@@ -12,8 +12,6 @@ const transporter = nodemailer.createTransport(
 );
 const { validationResult } = require("express-validator");
 exports.getLogin = (req, res, next) => {
-  // const isLoggedIn =
-  //   req.get("Cookie").split(";")[0].trim().split("=")[1] === "true"; // loggedIn=true
   let message = req.flash("error");
   if (message.length > 0) {
     message = message[0]; // lấy ra thông báo đầu tiên
@@ -47,32 +45,11 @@ exports.postLogin = (req, res, next) => {
       validationErrors: error.array(),
     });
   }
-  User.findOne({ email: email }).then((user) => {
-    if (!user) {
-      req.flash("error", "Invalid email or password.");
-      return res.status(422).render("auth/login", {
-        pageTitle: "Login",
-        path: "/login",
-        errorMessage: error.array()[0].msg,
-        oldInput: {
-          email: email,
-          password: password,
-        },
-        validationErrors: error.array(),
-      });
-    }
-    bcrypt
-      .compare(password, user.password)
-      .then((doMatch) => {
-        if (doMatch) {
-          req.session.isLoggedIn = true; // isLoggedIn = true
-          req.session.user = user; // user = user
-          return req.session.save((err) => {
-            console.log(err);
-            res.redirect("/");
-          });
-        }
-        res.status(422).render("auth/login", {
+  User.findOne({ email: email })
+    .then((user) => {
+      if (!user) {
+        req.flash("error", "Invalid email or password.");
+        return res.status(422).render("auth/login", {
           pageTitle: "Login",
           path: "/login",
           errorMessage: error.array()[0].msg,
@@ -80,26 +57,53 @@ exports.postLogin = (req, res, next) => {
             email: email,
             password: password,
           },
-          validationErrors: [],
+          validationErrors: error.array(),
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        res.redirect("/login");
-      });
+      }
+      bcrypt
+        .compare(password, user.password)
+        .then((doMatch) => {
+          if (doMatch) {
+            req.session.isLoggedIn = true; // isLoggedIn = true
+            req.session.user = user; // user = user
+            return req.session.save((err) => {
+              console.log(err);
+              res.redirect("/");
+            });
+          }
+          return res.status(422).render("auth/login", {
+            pageTitle: "Login",
+            path: "/login",
+            errorMessage: error.array()[0].msg,
+            oldInput: {
+              email: email,
+              password: password,
+            },
+            validationErrors: [],
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/login");
+        });
 
-    // req.session.user = user; // user = user
-    // req.session.isLoggedIn = true; // isLoggedIn = true
-    // res.redirect("/");
-    // // req.isLoggedIn = true; // boolean
-    // const { email, password } = req.body;
-  });
+      // req.session.user = user; // user = user
+      // req.session.isLoggedIn = true; // isLoggedIn = true
+      // res.redirect("/");
+      // // req.isLoggedIn = true; // boolean
+      // const { email, password } = req.body;
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log(err);
-    res.redirect("/");
+    return res.redirect("/");
   });
 };
 
@@ -126,10 +130,6 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
-
-  console.log("Email:", email);
-  console.log("Password:", password);
-  console.log("Confirm Password:", confirmPassword);
 
   // Validate email and password
   if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
@@ -171,7 +171,7 @@ exports.postSignup = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      res.redirect("/login");
+      return res.redirect("/login");
       // send mail
       // return transporter.sendMail({
       //   to: email,

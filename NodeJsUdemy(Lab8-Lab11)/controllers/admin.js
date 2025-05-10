@@ -32,11 +32,28 @@ exports.getAddProduct = (req, res, next) => {
 // add thêm product
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title.trim();
-  const imageUrl = req.body.imageUrl.trim();
+  const image = req.file;
   const price = req.body.price.trim();
   const description = req.body.description.trim();
   const errors = validationResult(req);
+  console.log(imageUrl);
 
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/edit-product",
+      editing: false,
+      hasError: true,
+      errorMessage: "Attached file is not an image.",
+      product: {
+        title: title,
+        imageUrl: imageUrl,
+        price: price,
+        description: description,
+      },
+      validationErrors: [],
+    });
+  }
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
@@ -51,9 +68,9 @@ exports.postAddProduct = (req, res, next) => {
         description: description,
       },
       validationErrors: errors.array(),
-      // isAuthenticated: req.session.isLoggedIn,
     });
   }
+  const imageUrl = image.path;
   const product = new Product({
     _id: new mongoose.Types.ObjectId(), // tạo id cho product
     title: title,
@@ -131,7 +148,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
-  const updatedImageUrl = req.body.imageUrl;
+  const image = req.file;
   const updatedPrice = req.body.price;
   const updatedDesc = req.body.description;
   const error = validationResult(req);
@@ -142,9 +159,10 @@ exports.postEditProduct = (req, res, next) => {
       path: "/admin/edit-product",
       editing: true, // this is for the edit product
       hasError: true,
+
+      // Chỉ cần cập nhật ba thuộc tính trên
       product: {
         title: updatedTitle,
-        imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDesc,
       },
@@ -158,7 +176,9 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDesc;
-      product.imageUrl = updatedImageUrl;
+      if (image) {
+        product.imageUrl = image.path;
+      }
       return product.save();
     })
 
