@@ -13,11 +13,10 @@ const orderSchema = new Schema({
     },
   ],
   user: {
-    name: { type: String, required: true },
+    name: { type: String },
     userId: {
       type: Schema.Types.ObjectId,
       ref: "User",
-      required: true,
     },
   },
 });

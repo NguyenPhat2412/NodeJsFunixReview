@@ -23,16 +23,15 @@ const store = new MongoDBStore({
 
 const csrfProtection = csrf();
 
-app.set("view engine", "ejs");
-app.set("views", "views");
-
 // Cấu hình multer để lưu trữ file
 const fileStorage = multer.diskStorage({
+  // lưu trữ file vào thư mục images
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "images"));
+    cb(null, "images");
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + "-" + file.originalname);
+    const timestamp = new Date().toISOString().replace(/:/g, "-");
+    cb(null, timestamp + "-" + file.originalname);
   },
 });
 
@@ -42,16 +41,19 @@ const fileFilter = (req, file, cb) => {
     file.mimetype === "image/jpg" ||
     file.mimetype === "image/jpeg"
   ) {
-    return cb(null, true);
+    cb(null, true);
   } else {
     cb(null, false);
   }
 };
 
+app.set("view engine", "ejs");
+app.set("views", "views");
+
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
-const user = require("./models/user");
+const { time } = require("console");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -61,7 +63,8 @@ app.use(
 ); // for parsing multipart/form-data
 
 app.use(express.static(path.join(__dirname, "public")));
-
+// thêm đường dẫn tĩnh cho thư mục public
+app.use("/images", express.static(path.join(__dirname, "images")));
 app.use(
   session({
     secret: "my secret",
@@ -79,7 +82,7 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session?.isLoggedIn || false; // thêm isAuthenticated vào locals
+  res.locals.isAuthenticated = req.session.isLoggedIn; // thêm isAuthenticated vào locals
   res.locals.csrfToken = req.csrfToken(); // thêm csrfToken vào locals
   next();
 });
@@ -88,7 +91,7 @@ app.use((req, res, next) => {
   if (!req.session.user) {
     return next();
   }
-  User.findById("64b0f2a1c4d3e5f8c8b7e4a1")
+  User.findById(req.session.user._id)
     .then((user) => {
       // thêm phương thức user phương thức này siêu quan trọng
       if (!user) {
@@ -106,21 +109,20 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-app.use(errorController.get404);
 app.get("/500", errorController.get500);
-
-// Thêm đường dẫn tĩnh cho hình ảnh
-app.uses("/image", express.static(path.join(__dirname, "images")));
+app.use(errorController.get404);
 
 app.use((error, req, res, next) => {
   const status = 500;
+  console.error("💥 ERROR CAUGHT:", error);
+  console.error("Session exists?", !!req.session);
   res.status(status).render("500", {
     pageTitle: "Error!",
     path: "/500",
-    isAuthenticated: false,
-    errorMessage: error.message,
+    isAuthenticated: req.session.isLoggedIn,
   });
 });
+
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {

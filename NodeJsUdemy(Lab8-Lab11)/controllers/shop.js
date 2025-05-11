@@ -2,6 +2,9 @@ const Product = require("../models/product");
 const Cart = require("../models/cart");
 const Order = require("../models/order");
 const user = require("../models/user");
+
+const path = require("path");
+const fs = require("fs");
 exports.getProducts = (req, res, next) => {
   Product.find()
     .then((products) => {
@@ -99,14 +102,14 @@ exports.getOrders = (req, res, next) => {
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
+        orders: orders,
       });
     })
     .catch((err) => {
       const error = new Error(err);
-      // Xây dựng mã thông báo lỗi
       error.httpStatusCode = 500;
       return next(error);
-    }); // Cuối cùng mới catch
+    });
 };
 
 exports.getCheckout = (req, res, next) => {
@@ -144,10 +147,9 @@ exports.getProduct = (req, res, next) => {
 exports.postOrder = (req, res, next) => {
   req.user
     .populate("cart.items.productId")
+    .execPopulate()
     .then((user) => {
-      console.log("Populated cart items:", user.cart.items);
       const products = user.cart.items.map((i) => {
-        console.log(i);
         return { quantity: i.quantity, product: { ...i.productId._doc } };
       });
       const order = new Order({
@@ -227,4 +229,17 @@ exports.postCart = (req, res, next) => {
   //   Cart.addProduct(prodId, product.price);
   // });
   // res.redirect("/cart");
+};
+
+// Hàm in pdf
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  const invoicePath = path.join("data", "invoices", invoiceName);
+  fs.readFile(invoicePath, (err, data) => {
+    if (err) {
+      return next(err);
+    }
+    res.send(data);
+  });
 };

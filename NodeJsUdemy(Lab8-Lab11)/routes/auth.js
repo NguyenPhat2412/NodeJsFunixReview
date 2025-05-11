@@ -63,4 +63,18 @@ router.post(
   authController.postSignup
 );
 
+router.get("/reset", authController.getReset);
+
+router.post("/reset", authController.postReset);
+router.get("/reset/:token", authController.getNewPassword);
+router.post(
+  "/new-password",
+  [
+    body("password", "Please enter a password with only numbers and text.")
+      .isAlphanumeric()
+      .isLength({ min: 8 })
+      .trim(),
+  ],
+  authController.postNewPassword
+);
 module.exports = router;

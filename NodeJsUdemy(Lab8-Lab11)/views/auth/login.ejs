@@ -25,7 +25,7 @@
                 <input type="text" name="password" id="password"  value = "<%= oldInput.password %>" class="<%= validationErrors.find(e => e.param === "password") ? "invalid" : "" %>" >
             </div>
             <div class="form-control">
-                <a href="/signup">Reset Password</a>
+                <a href="/reset">Reset Password</a>
             </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
             <button class="btn" type="submit">Login</button>

@@ -17,6 +17,7 @@
                                     <li>
                                         <p>Product Name: <%= p.product.title %></p>
                                         <p>Product Quantity: <%= p.product.quantity%></p>
+                                        <a href="/orders/<%= order._id%>">Invoice</a>
                                     </li>
                                 <% }) %>
                             </ul>

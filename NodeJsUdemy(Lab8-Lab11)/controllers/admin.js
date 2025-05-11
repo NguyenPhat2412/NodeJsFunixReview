@@ -3,10 +3,7 @@ const mongodb = require("mongodb");
 const mongoose = require("mongoose");
 
 const { validationResult } = require("express-validator");
-const { hash } = require("bcryptjs");
 
-// tạo id cho product
-const ObjectId = mongodb.ObjectId;
 // const getDb = require("../util/database").getDb;
 exports.getAddProduct = (req, res, next) => {
   // Kiểm tra xem người dùng đã đăng nhập hay chưa, bảo vệ trang này khi người dùng chưa đăng nhập
@@ -36,28 +33,26 @@ exports.postAddProduct = (req, res, next) => {
   const price = req.body.price.trim();
   const description = req.body.description.trim();
   const errors = validationResult(req);
-  console.log(imageUrl);
 
   if (!image) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
-      path: "/admin/edit-product",
+      path: "/admin/add-product",
       editing: false,
       hasError: true,
-      errorMessage: "Attached file is not an image.",
       product: {
         title: title,
-        imageUrl: imageUrl,
         price: price,
         description: description,
       },
+      errorMessage: "Attached file is not an image.",
       validationErrors: [],
     });
   }
   if (!errors.isEmpty()) {
     return res.status(422).render("admin/edit-product", {
       pageTitle: "Add Product",
-      path: "/admin/edit-product",
+      path: "/admin/add-product",
       editing: false,
       hasError: true,
       errorMessage: errors.array()[0].msg,
@@ -77,8 +72,11 @@ exports.postAddProduct = (req, res, next) => {
     price: price,
     imageUrl: imageUrl,
     description: description,
-    userId: req.session.user._id, // lấy id của user
+    userId: req.user, // lấy id của user
   });
+
+  // in product ra console de kiem tra
+  console.log(product);
 
   // tự động tạo id cho product
   product
