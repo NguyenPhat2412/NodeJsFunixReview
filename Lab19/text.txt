@@ -1,0 +1,23 @@
+Upload File
+Xử lý nhiều dữ liệu trên form. 
+Thư viện Multer, cũng như lọc file tương ứng. 
+
+Nếu không tải được thì npm install --save multer: 
+- npm install --verbose 
+- npm config set registry https://registry.npmjs.org/
+- npm install --save multer 
+
+Lab19.1 Tạo file .pdf Files với order data 
+- Xử lý với các thao tác với các loại file tương ứng đi kèm với chức năng như upload file
+- sử dụng npm install --save pdfkit 
+Sử dụng các thuộc tính như fontSize(value), text("value")
+
+Cần đưa vòng lặp forEach để duyệt ra những sản phẩm mà ta đã đặt mua rồi 
+đưa chúng hiển thị ra file pdf thông qua đối tượng pdfDoc 
+
+- Tạo thêm biến totalPrice để tính tổng tiền của từng đơn hàng tương ứng. 
+
+học được thêm chức năng tải tệp lên và tải tệp xuống 
+- xử dụng multer, thành phần trung gian giúp tự động trích xuất từ các yêu cầu và lưu trữ
+chúng. 
+- cấu hình cho header của file, sử dụng pdfKit để tạo ra file PDF, cũng như việc hạn chế truy cập vào file
