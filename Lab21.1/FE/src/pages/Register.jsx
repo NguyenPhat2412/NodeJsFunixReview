@@ -56,12 +56,6 @@ const Register = () => {
         console.error("Lỗi:", error);
         setError(error.message);
       });
-
-    // // Xóa các dữ liệu đã nhập
-    // setUsername("");
-    // setEmail("");
-    // setPassword("");
-    // setConfirmPassword("");
   };
 
   return (

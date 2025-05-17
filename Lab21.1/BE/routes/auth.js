@@ -28,4 +28,7 @@ router.put("/posts/:postId", upload.single("image"), feedController.updatePost);
 // Delete a Post
 router.delete("/posts/:postId", feedController.deletePost);
 
+// lấy current user
+router.get("/current-user", feedController.getCurrentUser);
+
 module.exports = router;

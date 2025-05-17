@@ -26,7 +26,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: false, limit: "10mb" })); // application/x-www-form-urlencoded
 // app.use(csrfProtection);
 app.use(flash());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // React frontend
+    credentials: true, // Allow session cookie from browser to pass through
+  })
+);
 
 app.use(
   session({
@@ -36,7 +41,7 @@ app.use(
     store: store,
     cookie: {
       secure: false, // bắt buộc nếu chạy localhost
-      // maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24,
     },
   })
 );
@@ -47,8 +52,7 @@ const storage = multer.diskStorage({
     cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + "-" + file.originalname);
+    cb(null, `${file.originalname}.png`);
   },
 });
 const fileFilter = (req, file, cb) => {
@@ -67,8 +71,9 @@ const upload = multer({
   dest: "images",
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: fileFilter,
+  storage: storage,
 });
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn; // thêm isAuthenticated vào locals
   // res.locals.csrfToken = req.csrfToken(); // thêm csrfToken vào locals

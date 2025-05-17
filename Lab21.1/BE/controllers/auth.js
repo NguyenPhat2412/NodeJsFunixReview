@@ -154,7 +154,7 @@ exports.createPost = async (req, res, next) => {
     });
   }
   // tạo url đầy đủ cho ảnh
-  const imageUrl = 'http://localhost:8080/${image.path.replace(/\\/g, "/")}';
+  const imageUrl = `http://localhost:8080/${image.path.replace(/\\/g, "/")}`;
   const post = new Post({
     title: title,
     imageUrl: imageUrl,
@@ -217,12 +217,7 @@ exports.deletePost = async (req, res, next) => {
           message: "No post found.",
         });
       }
-      if (post.userId.toString() !== req.user._id.toString()) {
-        return res.status(403).json({
-          message: "Not authorized.",
-        });
-      }
-      return Post.findByIdAndRemove(postId);
+      return Post.findByIdAndDelete(postId);
     })
     .then((result) => {
       if (!result) {
@@ -240,4 +235,22 @@ exports.deletePost = async (req, res, next) => {
         message: "Internal server error.",
       });
     });
+};
+
+// lấy session user
+exports.getCurrentUser = (req, res, next) => {
+  if (!req.session.user) {
+    return res.status(401).json({
+      message: "Not authenticated.",
+    });
+  }
+  const user = req.session.user;
+  res.status(200).json({
+    message: "User fetched successfully.",
+    user: {
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+    },
+  });
 };

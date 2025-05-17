@@ -24,6 +24,7 @@ const Login = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({
         email,
         password,
@@ -38,8 +39,6 @@ const Login = () => {
       .then((data) => {
         console.log("Đăng nhập thành công:", data);
 
-        // Lưu thông tin vào trình duyệt
-        localStorage.setItem("User", JSON.stringify(data));
         alert("Đăng nhập thành công, chuyển hướng đến trang chính...");
         // Chuyển hướng đến trang đăng nhập hoặc trang khác
         navigate("/");

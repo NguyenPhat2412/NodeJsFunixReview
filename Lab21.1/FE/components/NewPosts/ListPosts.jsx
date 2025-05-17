@@ -33,7 +33,7 @@ const PostList = () => {
   }, []);
 
   const handleDelete = (postId) => {
-    fetch(`http://localhost:8080/posts/${postId}`, {
+    fetch(`http://localhost:8080/auth/posts/${postId}`, {
       method: "DELETE",
     })
       .then((response) => {

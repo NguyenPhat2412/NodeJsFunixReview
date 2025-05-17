@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import NavBar from "../NavBar/NavBar";
 
 const ViewPosts = () => {
   const [post, setPost] = useState(null);
@@ -36,17 +37,32 @@ const ViewPosts = () => {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">{post.title}</h1>
-      <img
-        src={post.image}
-        alt={post.title}
-        className="w-full h-auto rounded-lg"
-      />
+    <>
+      <NavBar />
+      <div className="flex flex-col gap-4 items-center justify-center w-full h-full p-20">
+        <h1 className="text-2xl font-bold">{post.title}</h1>
+        <p className="text-gray-600 ">
+          Created by on {formatDate(post.createdAt)}
+        </p>
+        <div className="flex w-190 border-t justify-center items-center ">
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            className="w-150 h-100 object-cover rounded-lg mb-4 "
+          />
+        </div>
 
-      <p className="text-gray-600">Created by on {formatDate(post.createAt)}</p>
-      <p className="text-gray-600">{post.content}</p>
-    </div>
+        <p className="text-gray-600">{post.content}</p>
+        <button
+          onClick={() => {
+            navigate("/");
+          }}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300 w-fit cursor-pointer"
+        >
+          Back to Home
+        </button>
+      </div>
+    </>
   );
 };
 export default ViewPosts;

@@ -1,10 +1,34 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import "./NavBar.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 const NavBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState(null);
   // const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  // xử lí trạng thái đăng nhập
+  useEffect(() => {
+    fetch("http://localhost:8080/auth/current-user", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Không thể lấy thông tin người dùng");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Thông tin người dùng:", data.user.username);
+        setIsLoggedIn(true);
+        setUserName(data.user);
+      })
+      .catch((error) => {
+        console.error("Lỗi:", error);
+      });
+  }, [id]);
 
   const handleLogout = () => {
     fetch("http://localhost:8080/auth/logout", {
@@ -12,6 +36,7 @@ const NavBar = () => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
     })
       .then((response) => {
         if (!response.ok) {
@@ -41,9 +66,13 @@ const NavBar = () => {
               <Link to="/">Home</Link>
             </li>
             {isLoggedIn ? (
-              <ul>
-                <p>name</p>
-                <button onClick={handleLogout}>Logout</button>
+              <ul className="flex space-x-4 flex-direction: row">
+                <li>
+                  <p>{userName.username}</p>
+                </li>
+                <li>
+                  <button onClick={() => handleLogout()}>Logout</button>
+                </li>
               </ul>
             ) : (
               <>
