@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import "./ListPosts.css";
 const PostList = () => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   // const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
 
@@ -25,10 +26,12 @@ const PostList = () => {
       })
       .then((data) => {
         setPosts(data.posts);
+        setLoading(false);
         console.log(data);
       })
       .catch((error) => {
         console.error("Error fetching posts:", error);
+        setLoading(false);
       });
   }, []);
 
@@ -49,6 +52,13 @@ const PostList = () => {
         console.error("Error deleting post:", error);
       });
   };
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="loader"></div>
+      </div>
+    );
+  }
   return (
     <div className="post-list container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4 text-center">Posts</h2>
